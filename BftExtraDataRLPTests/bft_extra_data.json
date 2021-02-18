@@ -1,0 +1,23 @@
+{
+  "fully_populated_qbft_extra_data": {
+    "qbft_extra_data": {
+      "vanityData": "",
+      "seals": [
+        "",
+        ""
+      ],
+      "vote": {
+        "recipient": "",
+        "voteType": ""
+      },
+      "round": 1,
+      "validators": [
+        "",
+        ""
+      ]
+    },
+    "rlp_all": "",
+    "rlp_exclude_commit_seals": "",
+    "rlp_exclude_commit_seals_and_round_number": ""
+  }
+}
