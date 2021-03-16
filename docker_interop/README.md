@@ -10,7 +10,7 @@ have peered and are producing blocks.
 ## Operation
 To run this network:
 0. Ensure a Docker server is running on the local PC
-1. Execute the env.sh script, to set the tag of the Besu and GoQuorum images to be used 
+1. Source the env.sh script, to set the tag of the Besu and GoQuorum images to be used (not it must do so in THIS environment, not a sub-shell, thus 'source' not execute)
 2. In a terminal, change to this directory
 3. Execute `docker-compose up --force-recreate` (this prevent old databases being reused)
 
