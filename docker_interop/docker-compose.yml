@@ -10,29 +10,7 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - |
-        mkdir -p /eth/geth
-        cp /importData/static-nodes.json /eth/geth/
-        geth --datadir "/eth" init "/importData/quorum_genesis.json"
-        geth \
-        --mine \
-        --nousb \
-        --identity "validator-1" \
-        --rpc \
-        --bootnodes "" \
-        --rpcaddr "0.0.0.0" \
-        --rpcport "8545" \
-        --rpccorsdomain "*" \
-        --datadir "/eth" \
-        --port "30303" \
-        --rpcapi "admin,db,eth,net,web3,istanbul,personal" \
-        --networkid "2017" \
-        --nat "any" \
-        --nodekeyhex "55ec42a1da04bd05d0ee2c17fe6fb782531478ba8815f9c5f5ef7f90af5edc59" \
-        --debug \
-        --metrics \
-        --syncmode "full" \
-        --gasprice 0
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_1}
     networks:
       app_net:
         ipv4_address: 172.16.239.11
@@ -51,29 +29,7 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - |
-        mkdir -p /eth/geth
-        cp /importData/static-nodes.json /eth/geth/
-        geth --datadir "/eth" init "/importData/quorum_genesis.json"
-        geth \
-        --mine \
-        --nousb \
-        --identity "validator-2" \
-        --rpc \
-        --bootnodes "" \
-        --rpcaddr "0.0.0.0" \
-        --rpcport "8545" \
-        --rpccorsdomain "*" \
-        --datadir "/eth" \
-        --port "30303" \
-        --rpcapi "admin,db,eth,net,web3,istanbul,personal" \
-        --networkid "2017" \
-        --nat "any" \
-        --nodekeyhex "9a4b0678a40507b381e1db3d52847217092d08f839b183932cf4feefb06edceb" \
-        --debug \
-        --metrics \
-        --syncmode "full" \
-        --gasprice 0
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_2}
     networks:
       app_net:
         ipv4_address: 172.16.239.12
@@ -92,29 +48,7 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - |
-        mkdir -p /eth/geth
-        cp /importData/static-nodes.json /eth/geth/
-        geth --datadir "/eth" init "/importData/quorum_genesis.json"
-        geth \
-        --mine \
-        --nousb \
-        --identity "validator-3" \
-        --rpc \
-        --bootnodes "" \
-        --rpcaddr "0.0.0.0" \
-        --rpcport "8545" \
-        --rpccorsdomain "*" \
-        --datadir "/eth" \
-        --port "30303" \
-        --rpcapi "admin,db,eth,net,web3,istanbul,personal" \
-        --networkid "2017" \
-        --nat "any" \
-        --nodekeyhex "97bcfadc9f952bc5b60001608e342b702651096ce590bcf2856374925a808d9a" \
-        --debug \
-        --metrics \
-        --syncmode "full" \
-        --gasprice 0
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_3}
     networks:
       app_net:
         ipv4_address: 172.16.239.13
@@ -133,35 +67,15 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - |
-        mkdir -p /eth/geth
-        cp /importData/static-nodes.json /eth/geth/
-        geth --datadir "/eth" init "/importData/quorum_genesis.json"
-        geth \
-        --mine \
-        --nousb \
-        --identity "validator-4" \
-        --rpc \
-        --bootnodes "" \
-        --rpcaddr "0.0.0.0" \
-        --rpcport "8545" \
-        --rpccorsdomain "*" \
-        --datadir "/eth" \
-        --port "30303" \
-        --rpcapi "admin,db,eth,net,web3,istanbul,personal" \
-        --networkid "2017" \
-        --nat "any" \
-        --nodekeyhex "dd8407de5c3b8db5640c173f3ea2ebfd0be83805f6f80175444241e2a3216266" \
-        --debug \
-        --metrics \
-        --syncmode "full" \
-        --gasprice 0
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_4}
     networks:
       app_net:
         ipv4_address: 172.16.239.14
     restart: "no"
     volumes:
       - ./:/importData
+    environment:
+      - PRIVATE_CONFIG=ignore  
   validator-5:
     hostname: validator-5
     image: ${QUORUM_IMAGE}
@@ -172,29 +86,7 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - |
-        mkdir -p /eth/geth
-        cp /importData/static-nodes.json /eth/geth/
-        geth --datadir "/eth" init "/importData/quorum_genesis.json"
-        geth \
-        --mine \
-        --nousb \
-        --identity "validator-5" \
-        --rpc \
-        --bootnodes "" \
-        --rpcaddr "0.0.0.0" \
-        --rpcport "8545" \
-        --rpccorsdomain "*" \
-        --datadir "/eth" \
-        --port "30303" \
-        --rpcapi "admin,db,eth,net,web3,istanbul,personal" \
-        --networkid "2017" \
-        --nat "any" \
-        --nodekeyhex "6ae05c75295fa4fd5e0d5d09c79450a8c4c5bef8f58ce4c881e823107db1ddc2" \
-        --debug \
-        --metrics \
-        --syncmode "full" \
-        --gasprice 0
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_5}
     networks:
       app_net:
         ipv4_address: 172.16.239.15
@@ -207,20 +99,14 @@ services:
     hostname: besu-0
     image: ${BESU_IMAGE}
     ports:
-      - '30310:30303/udp'
-      - '30310:30303/tcp'
-      - '8552:8545'
-    command:  
-      - --genesis-file=/eth/besu_genesis.json
-      - --logging=trace
-      - --discovery-enabled=true
-      - --host-allowlist=all 
-      - --rpc-http-cors-origins=all
-      - --rpc-http-enabled=true
-      - --p2p-host=172.16.239.16
-      - --node-private-key-file=/eth/val_key_1
-      - --rpc-http-apis=ETH,NET,DEBUG,ADMIN,WEB3,EEA,PRIV
-      - --bootnodes=enode://b81c7d5207f96ee4239ba7597798f1e1ec6db494ead9aac0a55836b75bf8580cde01c577e406de12c057de23411e5a9fc723ad6dcd2e75262cf7d04c5613b9c7@172.16.239.10:30303,enode://c6cd164524a7f80bd02f7b3d7f61aa6f052e1be36ffe5655944281fb5999fe59a3551d52139cf7370111001429d965e1617a4574390e5eab8232dd15bcdfadd0@172.16.239.11:30303,enode://4daa1048a351545279fb851bd123b2f396592733a56e2fdda399c1892f0debab0e338e88d4e62e6445a94df7dc62776c55bfa0ecccfa2539e722496e8190ee65@172.16.239.12:30303,enode://c1599da6b1f64e24f872e8bdd1835750446b38cdcc66dd93ac4d0566409b39b188dd64dd4529eaa17ce4acf9c3286047c5736be44095c0c5ac17998e49cda986@172.16.239.13:30303,enode://e3c2670260d8fd8a7d7892a8244e88a59b3ea757443084d782c290350da71c9d3dec0832d8478709b589bdd94a69c29dbc3932a1f7cb54f1b9cf23a469259e6a@172.16.239.14:30303,enode://5ff0d5c853281a0ca02fafe8f11164fef42bfd3c74199151885094792f37c7cd3a42b76e4361545e024e0479c9d42c1cdcb4952779be9b147fb9e674e22117de@172.16.239.15:30303
+      - '30303:30303/udp'
+      - '30303:30303/tcp'
+      - '8545:8545'
+    entrypoint:
+      - /bin/sh  
+    command: 
+      - -c
+      - chmod 755 /eth/run_besu.sh && /eth/run_besu.sh ${PRIV_KEY_6}
     networks:
       app_net:
         ipv4_address: 172.16.239.16

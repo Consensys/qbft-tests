@@ -14,9 +14,10 @@ To run this network:
 2. Modify `.env` file to update docker image variables (if required) which are used by docker-compose.yml file
 3. In a terminal, change to this directory
 4. Execute `docker-compose up --force-recreate` (this prevent old databases being reused)
+5. Execute (in a separate shell window) `docker-compose down` to shutdown.
 
 ## Network Topology
-* The node-address and IP address of each node is fixed in the docker-compose, thus the enode-address of each node is known, and stored in the static-nodes.yaml file
+* The node-address and IP address of each node is fixed in the docker-compose, thus the enode-address of each node is known, and stored in the static-nodes.yaml file. (Also see .env file)
 * Quorum nodes connect to each other via static-nodes
 * Besu connects to all Quorum nodes via discovery (bootnodes specified on commandline)
 
