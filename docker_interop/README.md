@@ -10,9 +10,10 @@ have peered and are producing blocks.
 ## Operation
 To run this network:
 0. Ensure a Docker server is running on the local PC
-1. Source the env.sh script, to set the tag of the Besu and GoQuorum images to be used (not it must do so in THIS environment, not a sub-shell, thus 'source' not execute)
-2. In a terminal, change to this directory
-3. Execute `docker-compose up --force-recreate` (this prevent old databases being reused)
+1. GoQuorum docker image can be built locally, e.g. git clone https://github.com/ConsenSysQuorum/quorum and checkout qibft branch. `docker build -t localquorum:1.0 .`
+2. Modify `.env` file to update docker image variables (if required) which are used by docker-compose.yml file
+3. In a terminal, change to this directory
+4. Execute `docker-compose up --force-recreate` (this prevent old databases being reused)
 
 ## Network Topology
 * The node-address and IP address of each node is fixed in the docker-compose, thus the enode-address of each node is known, and stored in the static-nodes.yaml file
