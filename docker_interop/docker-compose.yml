@@ -1,16 +1,34 @@
 version: '3'
 services:
+  besu-node-0:
+    hostname: besu-0
+    image: ${BESU_IMAGE}
+    ports:
+      - '30303:30303/udp'
+      - '30303:30303/tcp'
+      - '8545:8545'
+    entrypoint:
+      - /bin/sh  
+    command: 
+      - -c
+      - chmod 755 /eth/run_besu.sh && /eth/run_besu.sh ${PRIV_KEY_6} 8545 30303
+    networks:
+      app_net:
+        ipv4_address: 172.16.239.16
+    restart: "no"
+    volumes:
+      - ./:/eth
   validator-1:
     hostname: validator-1
     image: ${QUORUM_IMAGE}
     ports:
-      - '30305:30303/udp'
-      - '30305:30303/tcp'
-      - '8547:8545'
+      - '30305:30305/udp'
+      - '30305:30305/tcp'
+      - '8547:8547'
     entrypoint:
       - /bin/sh
       - -c
-      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_1}
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_1} 8547 30305
     networks:
       app_net:
         ipv4_address: 172.16.239.11
@@ -23,13 +41,13 @@ services:
     hostname: validator-2
     image: ${QUORUM_IMAGE}
     ports:
-      - '30306:30303/udp'
-      - '30306:30303/tcp'
-      - '8548:8545'
+      - '30306:30306/udp'
+      - '30306:30306/tcp'
+      - '8548:8548'
     entrypoint:
       - /bin/sh
       - -c
-      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_2}
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_2} 8548 30306
     networks:
       app_net:
         ipv4_address: 172.16.239.12
@@ -42,13 +60,13 @@ services:
     hostname: validator-3
     image: ${QUORUM_IMAGE}
     ports:
-      - '30307:30303/udp'
-      - '30307:30303/tcp'
-      - '8549:8545'
+      - '30307:30307/udp'
+      - '30307:30307/tcp'
+      - '8549:8549'
     entrypoint:
       - /bin/sh
       - -c
-      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_3}
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_3} 8549 30307
     networks:
       app_net:
         ipv4_address: 172.16.239.13
@@ -61,13 +79,13 @@ services:
     hostname: validator-4
     image: ${QUORUM_IMAGE}
     ports:
-      - '30308:30303/udp'
-      - '30308:30303/tcp'
-      - '8550:8545'
+      - '30308:30308/udp'
+      - '30308:30308/tcp'
+      - '8550:8550'
     entrypoint:
       - /bin/sh
       - -c
-      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_4}
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_4} 8550 30308
     networks:
       app_net:
         ipv4_address: 172.16.239.14
@@ -80,13 +98,13 @@ services:
     hostname: validator-5
     image: ${QUORUM_IMAGE}
     ports:
-      - '30309:30303/udp'
-      - '30309:30303/tcp'
-      - '8551:8545'
+      - '30309:30309/udp'
+      - '30309:30309/tcp'
+      - '8551:8551'
     entrypoint:
       - /bin/sh
       - -c
-      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_5}
+      - chmod 755 /importData/run_geth.sh && /importData/run_geth.sh ${PRIV_KEY_5} 8551 30309
     networks:
       app_net:
         ipv4_address: 172.16.239.15
@@ -95,24 +113,6 @@ services:
       - ./:/importData
     environment:
       - PRIVATE_CONFIG=ignore
-  besu-node-0:
-    hostname: besu-0
-    image: ${BESU_IMAGE}
-    ports:
-      - '30303:30303/udp'
-      - '30303:30303/tcp'
-      - '8545:8545'
-    entrypoint:
-      - /bin/sh  
-    command: 
-      - -c
-      - chmod 755 /eth/run_besu.sh && /eth/run_besu.sh ${PRIV_KEY_6}
-    networks:
-      app_net:
-        ipv4_address: 172.16.239.16
-    restart: "no"
-    volumes:
-      - ./:/eth
 networks:
   app_net:
     driver: bridge
