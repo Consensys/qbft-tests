@@ -5,7 +5,8 @@
     "istanbul": {
       "epoch": 30000,
       "policy": 0,
-      "qibftblock": 0
+      "qibftblock": 0,
+      "ceil2Nby3Block": 0
     }
   },
   "nonce": "0x0",
