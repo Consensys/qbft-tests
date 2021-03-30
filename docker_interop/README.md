@@ -16,9 +16,10 @@ producing blocks.
    (either in resources which will be applicable on all future runs `./app/src/main/resources/.env` or in generated `./out/.env`)
 
 ## Generate docker-compose
+0. delete `./app/out` if required
 1. Execute `./gradlew run`
-2. The above command will (by default) generate a docker-compose with 2 Besu nodes and 2 Quorum nodes in `./out` folder.
-3. To get command help, run `./gradlew run --args="-h"`.
+2. The above command will (by default) generate a docker-compose with 2 Besu nodes and 2 Quorum nodes in `./app/out` folder.
+3. To get command help and/or modify args, run `./gradlew run --args="-h"`.
 
 
 ## Operation

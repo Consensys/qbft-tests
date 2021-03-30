@@ -36,7 +36,7 @@ public class QbftDockerComposeApp implements Callable<Integer> {
     @CommandLine.Option(names = {"-q", "--quorumNodes"}, description = "Number of Quorum Nodes to include in docker-compose. Default: ${DEFAULT-VALUE}")
     private int quorumNodes = 2;
     @CommandLine.Option(names = {"-d", "--destination"}, description = "destination directory where docker-compose will be generated. Default: ${DEFAULT-VALUE}")
-    private File destination = Path.of("./out").toFile();
+    private File destination = Path.of("out").toFile().getAbsoluteFile();
 
     public static void main(String[] args) {
         final int exitCode = new CommandLine(new QbftDockerComposeApp()).execute(args);

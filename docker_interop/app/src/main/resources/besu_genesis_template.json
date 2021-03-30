@@ -4,7 +4,7 @@
 		"homesteadBlock": 0,
 		"qbft": {
 			"epochlength": 30000,
-			"blockperiodseconds": 1,
+			"blockperiodseconds": 5,
 			"requesttimeoutseconds": 10
 		}
 	},

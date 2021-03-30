@@ -5,7 +5,7 @@
     "istanbul": {
       "epoch": 30000,
       "requestTimeout": 10000,
-      "blockPeriod": 1,
+      "blockPeriod": 5,
       "policy": 0,
       "qibftblock": 0,
       "ceil2Nby3Block": 0
