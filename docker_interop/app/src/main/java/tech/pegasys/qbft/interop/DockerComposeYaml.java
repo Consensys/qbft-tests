@@ -35,7 +35,6 @@ public class DockerComposeYaml {
         final Yaml yaml = new Yaml(dumperOptions);
         final Path file = directory.resolve("docker-compose.yml");
         try (final FileWriter fileWriter = new FileWriter(file.toFile(), StandardCharsets.UTF_8)) {
-
             yaml.dump(addServices(besuNodeKeyPairs, quorumNodeKeyPairs), fileWriter);
         }
         return file;

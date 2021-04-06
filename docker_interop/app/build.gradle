@@ -23,7 +23,7 @@ dependencyManagement {
         dependency 'org.yaml:snakeyaml:1.28'
         dependency 'commons-io:commons-io:2.8.0'
         dependency 'info.picocli:picocli:4.6.1'
-
+        dependency 'org.apache.commons:commons-lang3:3.12.0'
     }
 }
 
@@ -41,15 +41,8 @@ dependencies {
     implementation 'org.hyperledger.besu.internal:common'
     implementation 'org.yaml:snakeyaml'
     implementation 'info.picocli:picocli'
+    implementation 'org.apache.commons:commons-lang3'
 
-    // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-
-    // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
 }
 
 application {

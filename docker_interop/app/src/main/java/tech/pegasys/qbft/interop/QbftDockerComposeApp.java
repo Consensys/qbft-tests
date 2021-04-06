@@ -3,12 +3,14 @@
  */
 package tech.pegasys.qbft.interop;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hyperledger.besu.consensus.qbft.QbftExtraDataCodec;
 import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.SECP256K1;
 import org.hyperledger.besu.ethereum.core.Address;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +20,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,12 +35,17 @@ import static tech.pegasys.qbft.interop.DockerComposeYaml.IP_PREFIX;
 public class QbftDockerComposeApp implements Callable<Integer> {
     private static final SECP256K1 secp256K1 = new SECP256K1();
 
-    @CommandLine.Option(names = {"-b", "--besuNodes"}, description = "Number of Besu Nodes to include in docker-compose. Default: ${DEFAULT-VALUE}")
+    @Option(names = {"-b", "--besuNodes"}, description = "Number of Besu Nodes to include in docker-compose. Default: ${DEFAULT-VALUE}")
     private int besuNodes = 2;
-    @CommandLine.Option(names = {"-q", "--quorumNodes"}, description = "Number of Quorum Nodes to include in docker-compose. Default: ${DEFAULT-VALUE}")
+    @Option(names = {"-q", "--quorumNodes"}, description = "Number of Quorum Nodes to include in docker-compose. Default: ${DEFAULT-VALUE}")
     private int quorumNodes = 2;
-    @CommandLine.Option(names = {"-d", "--destination"}, description = "destination directory where docker-compose will be generated. Default: ${DEFAULT-VALUE}")
+    @Option(names = {"-d", "--destination"}, description = "destination directory where docker-compose will be generated. Default: ${DEFAULT-VALUE}")
     private File destination = Path.of("out").toFile().getAbsoluteFile();
+    @Option(names = {"-p", "--block-period"}, description = "Block period (in seconds) to use. Default: ${DEFAULT-VALUE}")
+    private Integer blockPeriodSeconds = 5;
+    @Option(names = {"-r", "--request-timeout"}, description = "Block request timeout (in seconds) to use. Default: ${DEFAULT-VALUE}")
+    private Integer requestTimeoutSeconds = 10;
+
 
     public static void main(String[] args) {
         final int exitCode = new CommandLine(new QbftDockerComposeApp()).execute(args);
@@ -73,11 +82,17 @@ public class QbftDockerComposeApp implements Callable<Integer> {
         System.out.println("Extra data: " + genesisExtraDataString);
 
         // write besu_genesis
-        modifyAndCopyResource("besu_genesis_template.json", directory.resolve("besu_genesis.json"),"%EXTRA_DATA%", genesisExtraDataString);
+        modifyAndCopyResource("besu_genesis_template.json", directory.resolve("besu_genesis.json"),
+                Map.of("%EXTRA_DATA%", genesisExtraDataString,
+                        "%BLOCK_PERIOD%", String.valueOf(blockPeriodSeconds),
+                        "%REQUEST_TIMEOUT%", String.valueOf(requestTimeoutSeconds)));
         System.out.println("Generated: " + directory.resolve("besu_genesis.json"));
 
         // write quorum_genesis
-        modifyAndCopyResource("quorum_genesis_template.json", directory.resolve("quorum_genesis.json"),"%EXTRA_DATA%", genesisExtraDataString);
+        modifyAndCopyResource("quorum_genesis_template.json", directory.resolve("quorum_genesis.json"),
+                Map.of("%EXTRA_DATA%", genesisExtraDataString,
+                        "%BLOCK_PERIOD%", String.valueOf(blockPeriodSeconds),
+                        "%REQUEST_TIMEOUT%", String.valueOf(requestTimeoutSeconds * 1_000L))); // milliseconds
         System.out.println("Generated: " + directory.resolve("quorum_genesis_template.json"));
 
         // write static-nodes
@@ -109,10 +124,13 @@ public class QbftDockerComposeApp implements Callable<Integer> {
         }
     }
 
-    private static void modifyAndCopyResource(final String resource, final Path destination, final String target, final String replacement) throws IOException {
+    private static void modifyAndCopyResource(final String resource, final Path destination, final Map<String, String> tokenMap) throws IOException {
         try (final InputStream resourceAsStream = QbftDockerComposeApp.class.getClassLoader().getResourceAsStream(resource)) {
+            if (resourceAsStream == null) {
+                throw new IllegalStateException("Unable to load contents from resource: " + resource);
+            }
             final String contents = new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8);
-            final String modified = contents.replace(target, replacement);
+            final String modified = StringUtils.replaceEach(contents, tokenMap.keySet().toArray(new String[0]), tokenMap.values().toArray(new String[0]));
             Files.writeString(destination, modified, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         }
     }
