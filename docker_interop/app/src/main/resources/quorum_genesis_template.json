@@ -4,8 +4,6 @@
     "homesteadBlock": 0,
     "istanbul": {
       "epoch": 30000,
-      "requestTimeout": %REQUEST_TIMEOUT%,
-      "blockPeriod": %BLOCK_PERIOD%,
       "policy": 0,
       "qibftblock": 0,
       "ceil2Nby3Block": 0

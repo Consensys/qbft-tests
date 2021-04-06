@@ -74,7 +74,9 @@ public class QbftDockerComposeApp implements Callable<Integer> {
         copyResource("run_besu.sh", directory.resolve("run_besu.sh"));
         System.out.println("Generated: " + directory.resolve("run_besu.sh"));
 
-        copyResource("run_geth.sh", directory.resolve("run_geth.sh"));
+        modifyAndCopyResource("run_geth.sh", directory.resolve("run_geth.sh"),
+                Map.of("--istanbul.blockperiod 5", "--istanbul.blockperiod " + blockPeriodSeconds,
+                        "--istanbul.requesttimeout 10000", "--istanbul.requesttimeout " + requestTimeoutSeconds * 1_000L));
         System.out.println("Generated: " + directory.resolve("run_geth.sh"));
 
         // generate ExtraData
@@ -90,9 +92,7 @@ public class QbftDockerComposeApp implements Callable<Integer> {
 
         // write quorum_genesis
         modifyAndCopyResource("quorum_genesis_template.json", directory.resolve("quorum_genesis.json"),
-                Map.of("%EXTRA_DATA%", genesisExtraDataString,
-                        "%BLOCK_PERIOD%", String.valueOf(blockPeriodSeconds),
-                        "%REQUEST_TIMEOUT%", String.valueOf(requestTimeoutSeconds * 1_000L))); // milliseconds
+                Map.of("%EXTRA_DATA%", genesisExtraDataString));
         System.out.println("Generated: " + directory.resolve("quorum_genesis_template.json"));
 
         // write static-nodes

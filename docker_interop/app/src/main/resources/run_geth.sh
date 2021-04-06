@@ -28,4 +28,6 @@ geth \
         --debug \
         --metrics \
         --syncmode "full" \
-        --miner.gasprice 0
+        --miner.gasprice 0 \
+        --istanbul.blockperiod 5 \
+        --istanbul.requesttimeout 10000
