@@ -20,10 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -75,8 +73,10 @@ public class QbftDockerComposeApp implements Callable<Integer> {
         System.out.println("Generated: " + directory.resolve("run_besu.sh"));
 
         modifyAndCopyResource("run_geth.sh", directory.resolve("run_geth.sh"),
-                Map.of("--istanbul.blockperiod 5", "--istanbul.blockperiod " + blockPeriodSeconds,
-                        "--istanbul.requesttimeout 10000", "--istanbul.requesttimeout " + requestTimeoutSeconds * 1_000L));
+                List.of("--istanbul.blockperiod 5",
+                        "--istanbul.requesttimeout 10000"),
+                List.of("--istanbul.blockperiod " + blockPeriodSeconds,
+                        "--istanbul.requesttimeout " + requestTimeoutSeconds * 1_000L));
         System.out.println("Generated: " + directory.resolve("run_geth.sh"));
 
         // generate ExtraData
@@ -85,14 +85,17 @@ public class QbftDockerComposeApp implements Callable<Integer> {
 
         // write besu_genesis
         modifyAndCopyResource("besu_genesis_template.json", directory.resolve("besu_genesis.json"),
-                Map.of("%EXTRA_DATA%", genesisExtraDataString,
-                        "%BLOCK_PERIOD%", String.valueOf(blockPeriodSeconds),
-                        "%REQUEST_TIMEOUT%", String.valueOf(requestTimeoutSeconds)));
+                List.of("%EXTRA_DATA%",
+                        "%BLOCK_PERIOD%",
+                        "%REQUEST_TIMEOUT%"),
+                List.of(genesisExtraDataString,
+                        String.valueOf(blockPeriodSeconds),
+                        String.valueOf(requestTimeoutSeconds)));
         System.out.println("Generated: " + directory.resolve("besu_genesis.json"));
 
         // write quorum_genesis
         modifyAndCopyResource("quorum_genesis_template.json", directory.resolve("quorum_genesis.json"),
-                Map.of("%EXTRA_DATA%", genesisExtraDataString));
+                List.of("%EXTRA_DATA%"), List.of(genesisExtraDataString));
         System.out.println("Generated: " + directory.resolve("quorum_genesis_template.json"));
 
         // write static-nodes
@@ -105,12 +108,12 @@ public class QbftDockerComposeApp implements Callable<Integer> {
 
     private void generateStaticNodes(final Path staticNodesDir, final List<String> enodesForStaticNodes) throws IOException {
         //write static-nodes for each node by not including enode for itself
-        for(int i = 0; i< enodesForStaticNodes.size(); i++) {
+        for (int i = 0; i < enodesForStaticNodes.size(); i++) {
             List<String> enodes = new ArrayList<>(enodesForStaticNodes);
             enodes.remove(i);
             //write as JSON array
             final String quoted = enodes.stream().map(s -> "\"" + s + "\"").collect(Collectors.joining(","));
-            Files.writeString(staticNodesDir.resolve("static-nodes-"+i+".json"), "[" + quoted + "]");
+            Files.writeString(staticNodesDir.resolve("static-nodes-" + i + ".json"), "[" + quoted + "]");
         }
     }
 
@@ -124,13 +127,15 @@ public class QbftDockerComposeApp implements Callable<Integer> {
         }
     }
 
-    private static void modifyAndCopyResource(final String resource, final Path destination, final Map<String, String> tokenMap) throws IOException {
+    private static void modifyAndCopyResource(final String resource, final Path destination,
+                                              final List<String> tokens,
+                                              final List<String> replacements) throws IOException {
         try (final InputStream resourceAsStream = QbftDockerComposeApp.class.getClassLoader().getResourceAsStream(resource)) {
             if (resourceAsStream == null) {
                 throw new IllegalStateException("Unable to load contents from resource: " + resource);
             }
             final String contents = new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8);
-            final String modified = StringUtils.replaceEach(contents, tokenMap.keySet().toArray(new String[0]), tokenMap.values().toArray(new String[0]));
+            final String modified = StringUtils.replaceEach(contents, tokens.toArray(String[]::new), replacements.toArray(String[]::new));
             Files.writeString(destination, modified, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         }
     }
