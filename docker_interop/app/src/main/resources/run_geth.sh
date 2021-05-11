@@ -8,7 +8,7 @@ STATIC_NODE_FILE=${4:?Must specify static nodes filename}
 P2P_IP=`awk 'END{print $1}' /etc/hosts`
 
 mkdir -p /eth/geth
-cp /scripts/static-nodes/${STATIC_NODE_FILE} /eth/geth/
+cp /scripts/static-nodes/${STATIC_NODE_FILE} /eth/geth/static-nodes.json
 geth --datadir "/eth" init "/scripts/quorum_genesis.json"
 geth \
         --mine \
