@@ -11,6 +11,12 @@
  * specific language governing permissions and limitations under the License.
  */
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id 'application'

@@ -8,17 +8,17 @@ This network can then be queried via Json RPC (or by log parsing) to determine i
 producing blocks.
 
 ## Built docker images locally (if required)
-1. GoQuorum docker image can be built locally, e.g. git clone https://github.com/ConsenSysQuorum/quorum and checkout qibft branch. `docker build -t localquorum:1.0 .`
-2. Besu docker image can be built locally. e.g. git clone https://github.com/hyperledger/besu.git. `./gradlew distDocker`.
+1. GoQuorum docker image can be built locally, e.g. `git clone https://github.com/ConsenSysQuorum/quorum` and checkout qibft branch. `docker build -t localquorum:1.0 .`
+2. Besu docker image can be built locally. e.g. `git clone https://github.com/hyperledger/besu.git`. `./gradlew distDocker`.
    Use `docker images` to determine the image name and tag. It should be similar to: 
    `hyperledger/besu:21.1.3-SNAPSHOT-openjdk-11`. The latest image from dockerhub can also be fetched `hyperledger/besu:develop`
 3. Update values of `QUORUM_IMAGE` and `BESU_IMAGE` in `.env` file if required 
-   (either in resources which will be applicable on all future runs `./app/src/main/resources/.env` or in generated `./out/.env`)
+   (either in resources which will be applicable on all future runs `./src/main/resources/.env` or in generated `./out/.env`)
 
 ## Generate docker-compose
-0. delete `./app/out` if required
+0. delete `./out` if required
 1. Execute `./gradlew run`
-2. The above command will (by default) generate a docker-compose with 2 Besu nodes and 2 Quorum nodes in `./app/out` folder.
+2. The above command will (by default) generate a docker-compose with 2 Besu nodes and 2 Quorum nodes in `./out` folder.
 3. To get command help and/or modify args, run `./gradlew run --args="-h"`.
 
 
@@ -26,7 +26,7 @@ producing blocks.
 To run this network:
 0. Ensure a Docker server is running on the local PC
 1. `cd` to `out` directory (or directory where `docker-compose.yml` is generated).   
-2. Execute `docker-compose up --force-recreate` (this prevent old databases being reused)
+2. Execute `docker-compose up --force-recreate` (this prevents old databases being reused)
 3. Execute (in a separate shell window) `docker-compose down` to bring the network down. `<CTRL+C>` also works.
 
 
