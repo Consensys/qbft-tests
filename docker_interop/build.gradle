@@ -11,9 +11,16 @@
  * specific language governing permissions and limitations under the License.
  */
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id 'application'
+    id 'com.diffplug.spotless' version '5.12.5'
 }
 
 dependencyManagement {
@@ -33,7 +40,6 @@ dependencyManagement {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     maven { url "https://hyperledger.jfrog.io/hyperledger/besu-maven" }
     maven { url "https://artifacts.consensys.net/public/maven/maven/" }
@@ -58,4 +64,22 @@ application {
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        // This path needs to be relative to each project
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/.gradle/**'
+            exclude '**/build/**'
+        }
+        removeUnusedImports()
+        // See gradle.properties for exports/opens flags required by JDK 16 and Google Java Format plugin
+        googleJavaFormat('1.10.0')
+        importOrder 'tech.pegasys', 'java', ''
+        trimTrailingWhitespace()
+        endWithNewline()
+        licenseHeaderFile "${rootDir}/gradle/spotless.java.license"
+    }
 }
