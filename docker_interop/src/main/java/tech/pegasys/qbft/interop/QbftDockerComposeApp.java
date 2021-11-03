@@ -19,6 +19,7 @@ import static tech.pegasys.qbft.interop.DockerComposeYaml.IP_PREFIX;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -75,8 +76,16 @@ public class QbftDockerComposeApp implements Callable<Integer> {
       description = "Block request timeout (in seconds) to use. Default: ${DEFAULT-VALUE}")
   private Integer requestTimeoutSeconds = 10;
 
+  @Option(
+      names = {"-l", "--log-level"},
+      description = "Log level for running nodes. Default: ${DEFAULT-VALUE}")
+  private Level logLevel = Level.INFO;
+
   public static void main(String[] args) {
-    final int exitCode = new CommandLine(new QbftDockerComposeApp()).execute(args);
+    final int exitCode =
+        new CommandLine(new QbftDockerComposeApp())
+            .setCaseInsensitiveEnumValuesAllowed(true)
+            .execute(args);
     System.exit(exitCode);
   }
 
@@ -94,7 +103,8 @@ public class QbftDockerComposeApp implements Callable<Integer> {
 
     // generate docker-compose file
     final DockerComposeYaml dockerComposeYaml = new DockerComposeYaml();
-    final Path generated = dockerComposeYaml.generate(directory, besuKeyPairs, quorumKeyPairs);
+    final Path generated =
+        dockerComposeYaml.generate(directory, besuKeyPairs, quorumKeyPairs, logLevel);
     System.out.println("Generated: " + generated);
 
     // write dev.env, run scripts

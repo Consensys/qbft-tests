@@ -5,12 +5,14 @@ PRIV_KEY=${1:?Must specify node key}
 P2P_PORT=${2:?Must specify P2P port}
 RPC_PORT=${3:?Must specify RPC port}
 STATIC_NODE_FILE=${4:?Must specify static nodes filename}
+LOG_LEVEL=${5:-3}
 P2P_IP=`awk 'END{print $1}' /etc/hosts`
 
 mkdir -p /eth/geth
 cp /scripts/static-nodes/${STATIC_NODE_FILE} /eth/geth/static-nodes.json
 geth --datadir "/eth" init "/scripts/quorum_genesis.json"
 geth \
+        --verbosity ${LOG_LEVEL} \
         --mine \
         --nousb \
         --identity "${HOSTNAME}" \
