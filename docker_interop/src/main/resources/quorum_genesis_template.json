@@ -9,7 +9,7 @@
     "istanbul": {
       "epoch": 30000,
       "policy": 0,
-      "qbftblock": 0,
+      "testQBFTBlock": 0,
       "ceil2Nby3Block": 0
     }
   },

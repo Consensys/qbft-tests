@@ -14,6 +14,7 @@
  */
 package tech.pegasys.qbft.interop;
 
+import java.lang.System.Logger.Level;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class DockerComposeService {
   private String ipAddress;
   private String privateKey;
   private String staticNodeFileName;
+  private Level logLevel;
 
   public Map<String, Object> getMap() {
     final Map<String, Object> map = new LinkedHashMap<>();
@@ -52,14 +54,35 @@ public class DockerComposeService {
   }
 
   private String getCommand() {
-    final String commandFormat = "%s %s %d %d %s";
+    final String commandFormat = "%s %s %d %d %s %s";
     return String.format(
         commandFormat,
         isBesuMode ? BESU_COMMAND : GO_QUORUM_COMMAND,
         privateKey,
         p2pPort,
         rpcPort,
-        staticNodeFileName);
+        staticNodeFileName,
+        isBesuMode ? logLevel.name() : parseLogLevelToGoQuorumValue(logLevel));
+  }
+
+  private int parseLogLevelToGoQuorumValue(Level logLevel) {
+    // 0=silent, 1=error, 2=warn, 3=info, 4=debug, 5=detail
+    switch (logLevel) {
+      case OFF:
+        return 0;
+      case ERROR:
+        return 1;
+      case WARNING:
+        return 2;
+      case INFO:
+        return 3;
+      case DEBUG:
+        return 4;
+      case TRACE:
+        return 5;
+      default:
+        return 3;
+    }
   }
 
   public static final class Builder {
@@ -71,6 +94,7 @@ public class DockerComposeService {
     private String ipAddress;
     private String privateKey;
     private String staticNodeFileName;
+    private Level logLevel;
 
     private Builder() {}
 
@@ -118,6 +142,11 @@ public class DockerComposeService {
       return this;
     }
 
+    public Builder withLogLevel(Level logLevel) {
+      this.logLevel = logLevel;
+      return this;
+    }
+
     public DockerComposeService build() {
       DockerComposeService dockerComposeService = new DockerComposeService();
       dockerComposeService.serviceName = this.serviceName;
@@ -128,6 +157,7 @@ public class DockerComposeService {
       dockerComposeService.ipAddress = this.ipAddress;
       dockerComposeService.privateKey = this.privateKey;
       dockerComposeService.staticNodeFileName = this.staticNodeFileName;
+      dockerComposeService.logLevel = this.logLevel;
       return dockerComposeService;
     }
   }

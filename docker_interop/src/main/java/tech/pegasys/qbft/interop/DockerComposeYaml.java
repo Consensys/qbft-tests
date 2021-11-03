@@ -17,6 +17,7 @@ package tech.pegasys.qbft.interop;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -40,7 +41,8 @@ public class DockerComposeYaml {
   public Path generate(
       final Path directory,
       final List<KeyPair> besuNodeKeyPairs,
-      final List<KeyPair> quorumNodeKeyPairs)
+      final List<KeyPair> quorumNodeKeyPairs,
+      final Level logLevel)
       throws IOException {
     final DumperOptions dumperOptions = new DumperOptions();
     dumperOptions.setIndent(2);
@@ -50,13 +52,13 @@ public class DockerComposeYaml {
     final Yaml yaml = new Yaml(dumperOptions);
     final Path file = directory.resolve("docker-compose.yml");
     try (final FileWriter fileWriter = new FileWriter(file.toFile(), StandardCharsets.UTF_8)) {
-      yaml.dump(addServices(besuNodeKeyPairs, quorumNodeKeyPairs), fileWriter);
+      yaml.dump(addServices(besuNodeKeyPairs, quorumNodeKeyPairs, logLevel), fileWriter);
     }
     return file;
   }
 
   private Map<String, Object> addServices(
-      final List<KeyPair> besuNodeKeyPairs, final List<KeyPair> quorumNodeKeyPairs)
+      final List<KeyPair> besuNodeKeyPairs, final List<KeyPair> quorumNodeKeyPairs, Level logLevel)
       throws IOException {
     final Map<String, Object> services = new LinkedHashMap<>();
     int staticNodeFileIndex = 0;
@@ -73,6 +75,7 @@ public class DockerComposeYaml {
               .withPrivateKey(
                   besuNodeKeyPairs.get(i).getPrivateKey().getEncodedBytes().toUnprefixedHexString())
               .withStaticNodeFileName(String.format(staticNodeFileFormat, staticNodeFileIndex++))
+              .withLogLevel(logLevel)
               .build();
 
       services.putAll(service.getMap());
@@ -94,6 +97,7 @@ public class DockerComposeYaml {
                       .getEncodedBytes()
                       .toUnprefixedHexString())
               .withStaticNodeFileName(String.format(staticNodeFileFormat, staticNodeFileIndex++))
+              .withLogLevel(logLevel)
               .build();
 
       services.putAll(service.getMap());
